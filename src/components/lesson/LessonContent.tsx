@@ -6,6 +6,8 @@ import type { Lesson } from '@/lib/types'
 import { BookOpen } from 'lucide-react'
 import YouTubeEmbed from '@/components/mdx/YouTubeEmbed'
 import LessonImage  from '@/components/mdx/LessonImage'
+import LessonQuiz   from '@/components/lesson/LessonQuiz'
+import CodeBlock    from '@/components/mdx/CodeBlock'
 
 type Props = { lesson: Lesson }
 
@@ -26,7 +28,12 @@ const components = {
       ? <code className={`${className} text-sm font-mono`} {...p}>{children}</code>
       : <code className="bg-gray-100 text-gray-800 px-1.5 py-0.5 rounded text-sm font-mono" {...p}>{children}</code>
   },
-  pre: (p: any) => <pre className="bg-gray-900 text-gray-100 rounded-xl p-5 overflow-x-auto mb-6 text-sm leading-relaxed" {...p} />,
+  pre: ({ children }: any) => {
+    const code = children?.props
+    const lang = code?.className?.replace('language-', '') ?? ''
+    const text = typeof code?.children === 'string' ? code.children.trimEnd() : ''
+    return <CodeBlock code={text} language={lang} />
+  },
   strong: (p: any) => <strong className="font-semibold text-gray-900" {...p} />,
   hr: () => <hr className="border-gray-200 my-8" />,
   a: (p: any) => <a className="text-blue-600 underline hover:text-blue-800 transition-colors" target="_blank" rel="noopener noreferrer" {...p} />,
@@ -61,6 +68,7 @@ export default function LessonContent({ lesson }: Props) {
         {hasContent && mdx ? (
           <div className="prose-custom">
             <MDXRemote {...mdx} components={components} />
+            <LessonQuiz lesson={lesson} />
           </div>
         ) : (
           /* Placeholder when content_mdx is empty */
