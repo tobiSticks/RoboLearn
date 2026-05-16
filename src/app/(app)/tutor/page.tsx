@@ -49,6 +49,13 @@ export default function TutorPage() {
       body: JSON.stringify({ messages: newMessages, sessionId }),
     })
 
+    if (!res.ok) {
+      const { error } = await res.json().catch(() => ({ error: 'Something went wrong. Please try again.' }))
+      setMessages(prev => [...prev, { role: 'assistant', content: error }])
+      setLoading(false)
+      return
+    }
+
     const reader   = res.body!.getReader()
     const decoder  = new TextDecoder()
     let aiContent  = ''

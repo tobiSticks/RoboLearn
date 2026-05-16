@@ -27,28 +27,42 @@ Guidelines:
 - If a concept relates to the current lesson, tie your explanation back to it
 - Keep answers focused and not too long — offer to go deeper if they want`
 
-  const stream = await client.chat.completions.create({
-    model: 'meta-llama/Llama-3.3-70B-Instruct',
-    max_tokens: 1024,
-    stream: true,
-    messages: [{ role: 'system', content: systemPrompt }, ...messages],
-  })
+  let stream
+  try {
+    stream = await client.chat.completions.create({
+      model: 'Qwen/Qwen2.5-72B-Instruct',
+      max_tokens: 1024,
+      stream: true,
+      messages: [{ role: 'system', content: systemPrompt }, ...messages],
+    })
+  } catch (err: any) {
+    const status = err?.status ?? 500
+    const message =
+      status === 429 ? 'The AI tutor is busy right now — you\'ve hit the rate limit. Wait a moment and try again.'
+      : status === 401 ? 'Invalid API key. Please check your GEMINI_API_KEY.'
+      : 'The AI tutor is unavailable right now. Please try again.'
+    return NextResponse.json({ error: message }, { status })
+  }
 
   const encoder = new TextEncoder()
   const readable = new ReadableStream({
     async start(controller) {
       let fullResponse = ''
-      for await (const chunk of stream) {
-        const text = chunk.choices[0]?.delta?.content ?? ''
-        if (text) {
-          fullResponse += text
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text })}\n\n`))
+      try {
+        for await (const chunk of stream) {
+          const text = chunk.choices[0]?.delta?.content ?? ''
+          if (text) {
+            fullResponse += text
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text })}\n\n`))
+          }
         }
+      } catch {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: '\n\n_Connection interrupted. Please try again._' })}\n\n`))
       }
       controller.enqueue(encoder.encode('data: [DONE]\n\n'))
       controller.close()
 
-      if (sessionId) {
+      if (sessionId && fullResponse) {
         await supabase.from('chat_messages').insert([
           { session_id: sessionId, role: 'assistant', content: fullResponse }
         ])
