@@ -4,6 +4,8 @@ import { createClient } from '@/lib/supabase/client'
 import { Bot, Send, Loader2, User, ChevronDown, ChevronUp, Lightbulb,ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Lesson } from '@/lib/types'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 type Message = { role: 'user' | 'assistant'; content: string }
 
@@ -60,6 +62,13 @@ export default function LessonTutor({ lesson, userId }: { lesson: Lesson; userId
         lessonContext: { title: lesson.title, description: lesson.description, difficulty: lesson.difficulty },
       }),
     })
+
+    if (!res.ok) {
+      const { error } = await res.json().catch(() => ({ error: 'Something went wrong. Please try again.' }))
+      setMessages(prev => [...prev, { role: 'assistant', content: error }])
+      setLoading(false)
+      return
+    }
 
     const reader  = res.body!.getReader()
     const decoder = new TextDecoder()
@@ -140,7 +149,28 @@ export default function LessonTutor({ lesson, userId }: { lesson: Lesson; userId
                     ? 'bg-blue-600 text-white rounded-br-sm'
                     : 'bg-white border border-gray-100 text-gray-800 rounded-bl-sm'
                 )}>
-                  {msg.content || <Loader2 className="w-3 h-3 animate-spin text-gray-400" />}
+                  {msg.content
+                    ? msg.role === 'assistant'
+                      ? <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            p: ({ children }) => <p className="mb-1.5 last:mb-0">{children}</p>,
+                            ul: ({ children }) => <ul className="list-disc pl-3 mb-1.5 space-y-0.5">{children}</ul>,
+                            ol: ({ children }) => <ol className="list-decimal pl-3 mb-1.5 space-y-0.5">{children}</ol>,
+                            li: ({ children }) => <li>{children}</li>,
+                            h3: ({ children }) => <h3 className="font-semibold mt-2 mb-1">{children}</h3>,
+                            h4: ({ children }) => <h4 className="font-semibold mt-1.5 mb-0.5">{children}</h4>,
+                            strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+                            code: ({ className, children }) =>
+                              className
+                                ? <code className="block bg-gray-900 text-gray-100 rounded p-2 my-1.5 text-[10px] overflow-x-auto whitespace-pre font-mono">{children}</code>
+                                : <code className="bg-gray-100 text-gray-800 px-1 py-0.5 rounded font-mono">{children}</code>,
+                            pre: ({ children }) => <>{children}</>,
+                          }}
+                        >{msg.content}</ReactMarkdown>
+                      : msg.content
+                    : <Loader2 className="w-3 h-3 animate-spin text-gray-400" />
+                  }
                 </div>
                 {msg.role === 'user' && (
                   <div className="w-6 h-6 bg-gray-200 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5">

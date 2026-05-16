@@ -4,6 +4,8 @@ import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote'
 import { serialize } from 'next-mdx-remote/serialize'
 import type { Lesson } from '@/lib/types'
 import { BookOpen } from 'lucide-react'
+import YouTubeEmbed from '@/components/mdx/YouTubeEmbed'
+import LessonImage  from '@/components/mdx/LessonImage'
 
 type Props = { lesson: Lesson }
 
@@ -28,6 +30,12 @@ const components = {
   strong: (p: any) => <strong className="font-semibold text-gray-900" {...p} />,
   hr: () => <hr className="border-gray-200 my-8" />,
   a: (p: any) => <a className="text-blue-600 underline hover:text-blue-800 transition-colors" target="_blank" rel="noopener noreferrer" {...p} />,
+  table:  (p: any) => <div className="overflow-x-auto mb-6"><table className="w-full text-sm border-collapse" {...p} /></div>,
+  th:     (p: any) => <th className="text-left px-3 py-2 bg-gray-50 border border-gray-200 font-semibold text-gray-700" {...p} />,
+  td:     (p: any) => <td className="px-3 py-2 border border-gray-200 text-gray-700" {...p} />,
+  // Custom MDX components
+  YouTube: YouTubeEmbed,
+  Image:   LessonImage,
 }
 
 export default function LessonContent({ lesson }: Props) {
