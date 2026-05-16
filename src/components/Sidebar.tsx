@@ -1,10 +1,10 @@
 'use client'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
-import { Bot, LayoutDashboard, BookOpen, MessageSquare, LogOut, User } from 'lucide-react'
+import { Bot, LayoutDashboard, BookOpen, MessageSquare, LogOut, User, Search } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useState } from 'react'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 
 const navItems = [
@@ -17,10 +17,16 @@ export default function Sidebar({ user }: { user: SupabaseUser }) {
   const pathname  = usePathname()
   const router    = useRouter()
   const supabase  = createClient()
+  const [query, setQuery] = useState('')
 
   async function handleSignOut() {
     await supabase.auth.signOut()
     router.push('/')
+  }
+
+  function handleSearch(e: React.FormEvent) {
+    e.preventDefault()
+    if (query.trim()) router.push(`/search?q=${encodeURIComponent(query.trim())}`)
   }
 
   return (
@@ -32,8 +38,23 @@ export default function Sidebar({ user }: { user: SupabaseUser }) {
         </div>
       </div>
 
+      {/* Search */}
+      <div className="px-3 pt-3">
+        <form onSubmit={handleSearch}>
+          <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus-within:border-blue-300 focus-within:bg-white transition-colors">
+            <Search className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+            <input
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              placeholder="Search lessons..."
+              className="flex-1 text-sm bg-transparent outline-none text-gray-700 placeholder-gray-400 min-w-0"
+            />
+          </div>
+        </form>
+      </div>
+
       {/* Nav */}
-      <nav className="flex-1 px-3 py-4 space-y-1">
+      <nav className="flex-1 px-3 py-3 space-y-1">
         {navItems.map(({ href, icon: Icon, label }) => (
           <Link key={href} href={href}
             className={cn(
