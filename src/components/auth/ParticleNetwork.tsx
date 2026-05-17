@@ -41,6 +41,7 @@ export default function ParticleNetwork() {
     const MAX_DIST = 160
 
     function draw() {
+      if (!canvas) return
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
       // Move particles
