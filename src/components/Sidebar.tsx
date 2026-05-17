@@ -2,15 +2,17 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Bot, LayoutDashboard, BookOpen, MessageSquare, LogOut, User, Search } from 'lucide-react'
+import { Bot, LayoutDashboard, BookOpen, MessageSquare, LogOut, User, Search, Trophy, Users } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 
 const navItems = [
-  { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { href: '/learn',     icon: BookOpen,         label: 'Learn'     },
-  { href: '/tutor',     icon: MessageSquare,    label: 'AI Tutor'  },
+  { href: '/dashboard',   icon: LayoutDashboard, label: 'Dashboard'   },
+  { href: '/learn',       icon: BookOpen,        label: 'Learn'       },
+  { href: '/tutor',       icon: MessageSquare,   label: 'AI Tutor'    },
+  { href: '/leaderboard', icon: Trophy,          label: 'Leaderboard' },
+  { href: '/community',   icon: Users,           label: 'Community'   },
 ]
 
 export default function Sidebar({ user }: { user: SupabaseUser }) {
@@ -69,10 +71,29 @@ export default function Sidebar({ user }: { user: SupabaseUser }) {
         ))}
       </nav>
 
+      {/* Ad slot */}
+      <div className="px-3 pb-3">
+        <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 p-3 text-center">
+          {/* ── Drop your ad code here ──
+              Ethicalads: replace this div with their embed snippet
+              Google AdSense: replace with your <ins class="adsbygoogle"> tag
+          */}
+          <p className="text-[10px] text-gray-400 leading-relaxed">
+            Ad — <a href="https://ethicalads.io" target="_blank" rel="noopener noreferrer"
+              className="underline hover:text-gray-500">Advertise here</a>
+          </p>
+        </div>
+      </div>
+
       {/* User */}
       <div className="px-3 py-4 border-t border-gray-100 space-y-1">
         <Link href="/profile"
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+          className={cn(
+            'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors',
+            pathname === '/profile'
+              ? 'bg-blue-50 text-blue-700 font-medium'
+              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+          )}>
           <User className="w-4 h-4" />
           <span className="truncate">{user.email}</span>
         </Link>

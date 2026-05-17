@@ -27,12 +27,26 @@ export default function LessonHeader({ track, module, lesson, progress, prevLess
 
   async function markComplete() {
     setMarking(true)
-    await supabase.from('lesson_progress').upsert({
-      user_id:      userId,
-      lesson_id:    lesson.id,
-      status:       'completed',
-      completed_at: new Date().toISOString(),
-    })
+    const { data: existing } = await supabase
+      .from('lesson_progress')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('lesson_id', lesson.id)
+      .single()
+
+    if (existing) {
+      await supabase.from('lesson_progress')
+        .update({ status: 'completed', completed_at: new Date().toISOString() })
+        .eq('id', existing.id)
+    } else {
+      await supabase.from('lesson_progress').insert({
+        user_id:      userId,
+        lesson_id:    lesson.id,
+        status:       'completed',
+        completed_at: new Date().toISOString(),
+      })
+    }
+
     setDone(true)
     setMarking(false)
     if (nextLesson) {
