@@ -2,12 +2,11 @@ import OpenAI from 'openai'
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 
-const client = new OpenAI({
-  apiKey: process.env.FEATHERLESS_API_KEY,
-  baseURL: 'https://api.featherless.ai/v1',
-})
-
 export async function POST(req: NextRequest) {
+  const client = new OpenAI({
+    apiKey: process.env.FEATHERLESS_API_KEY,
+    baseURL: 'https://api.featherless.ai/v1',
+  })
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
