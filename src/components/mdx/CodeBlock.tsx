@@ -60,16 +60,51 @@ function getBrowserBlocker(code: string): string | null {
   return null
 }
 
+// Robot-like placeholder function names that lessons use as concepts
+const ROBOT_PLACEHOLDERS = [
+  'move_forward', 'move_backward', 'turn', 'rotate', 'stop', 'read_sensor',
+  'read_distance_sensor', 'get_sensor_data', 'set_motor_speed', 'move_robot',
+  'send_command', 'read_encoder', 'set_speed', 'drive', 'brake',
+]
+
 function friendlyError(raw: string): string {
-  if (raw.includes('ModuleNotFoundError')) {
-    const mod = raw.match(/No module named '([^']+)'/)?.[1]
-    return `Module not found: '${mod}'\n\nThis package isn't available in the browser Python environment. If it requires physical hardware or a specific OS, it needs to run on your local machine.`
+  // Strip all Pyodide-internal traceback lines
+  const clean = raw
+    .split('\n')
+    .filter(l =>
+      !l.includes('CodeRunner') &&
+      !l.includes('coroutine = eval') &&
+      !l.includes('_pyodide') &&
+      !l.includes('python3') &&
+      !l.includes('.zip/') &&
+      !l.match(/^\s*\^+\s*$/) &&         // ^^^^ pointer lines
+      !l.trim().startsWith('at ')         // JS stack frames
+    )
+    .join('\n')
+    .trim()
+
+  // NameError — check if it's a robot placeholder function
+  const nameMatch = clean.match(/NameError: name '([^']+)' is not defined/)
+  if (nameMatch) {
+    const name = nameMatch[1]
+    if (ROBOT_PLACEHOLDERS.includes(name) || name.includes('robot') || name.includes('sensor') || name.includes('motor')) {
+      return `NameError: '${name}' is not defined\n\nThis code calls ${name}(), a placeholder function used to illustrate how robot code is structured. In a real project you'd implement this function to control your specific hardware (motors, sensors, etc.).\n\nThink of it as pseudocode — the logic is correct, but the hardware-specific parts are left for you to fill in.`
+    }
+    return `NameError: '${name}' is not defined\n\nThe variable or function '${name}' was used but never defined in this code snippet. It may be defined in another part of the lesson's codebase.`
   }
-  // Strip the long pyodide internal traceback lines, keep only the useful part
-  const lines = raw.split('\n').filter(l =>
-    !l.includes('pyodide') && !l.includes('zip/') && !l.trim().startsWith('at ')
-  )
-  return lines.join('\n').trim() || raw
+
+  // ModuleNotFoundError
+  const modMatch = clean.match(/ModuleNotFoundError: No module named '([^']+)'/)
+  if (modMatch) {
+    return `Module not found: '${modMatch[1]}'\n\nThis package isn't available in the browser Python environment. It likely requires physical hardware or a desktop installation to run.`
+  }
+
+  // SyntaxError
+  if (clean.includes('SyntaxError')) {
+    return clean.replace('SyntaxError:', '⚠️ Syntax error:')
+  }
+
+  return clean || raw
 }
 
 export default function CodeBlock({ code, language }: Props) {
