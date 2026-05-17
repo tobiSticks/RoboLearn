@@ -20,6 +20,7 @@ export default function ParticleNetwork() {
     let raf: number
 
     const resize = () => {
+      if (!canvas) return
       canvas.width  = window.innerWidth
       canvas.height = window.innerHeight
     }
@@ -41,6 +42,7 @@ export default function ParticleNetwork() {
     const MAX_DIST = 160
 
     function draw() {
+      if (!canvas) return
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
       // Move particles
