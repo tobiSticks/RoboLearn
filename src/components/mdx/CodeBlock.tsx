@@ -1,35 +1,69 @@
 'use client'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Play, Loader2, Terminal, Copy, Check } from 'lucide-react'
 
 type Props = { code: string; language: string }
 
+// Pyodide is loaded once and reused across all code blocks
+let pyodideInstance: any = null
+let pyodideLoading: Promise<any> | null = null
+
+async function getPyodide() {
+  if (pyodideInstance) return pyodideInstance
+  if (pyodideLoading) return pyodideLoading
+
+  pyodideLoading = (async () => {
+    // Load Pyodide from CDN
+    await new Promise<void>((resolve, reject) => {
+      if (document.getElementById('pyodide-script')) { resolve(); return }
+      const script = document.createElement('script')
+      script.id  = 'pyodide-script'
+      script.src = 'https://cdn.jsdelivr.net/pyodide/v0.27.0/full/pyodide.js'
+      script.onload  = () => resolve()
+      script.onerror = () => reject(new Error('Failed to load Pyodide'))
+      document.head.appendChild(script)
+    })
+    const py = await (window as any).loadPyodide()
+    pyodideInstance = py
+    return py
+  })()
+
+  return pyodideLoading
+}
+
 export default function CodeBlock({ code, language }: Props) {
   const [output, setOutput]   = useState<string | null>(null)
   const [running, setRunning] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [copied, setCopied]   = useState(false)
   const isPython = language === 'python'
 
   async function run() {
     setRunning(true)
     setOutput(null)
+
     try {
-      const res = await fetch('https://emkc.org/api/v2/piston/execute', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          language: 'python',
-          version: '3.10',
-          files: [{ content: code }],
-        }),
-      })
-      const data = await res.json()
-      const out = data.run?.stdout || data.run?.stderr || data.message || 'No output'
-      setOutput(out)
-    } catch {
-      setOutput('Error: Could not connect to the code runner.')
+      if (!pyodideInstance) {
+        setLoading(true)
+        await getPyodide()
+        setLoading(false)
+      }
+
+      const py = pyodideInstance
+
+      // Capture stdout
+      let stdout = ''
+      py.setStdout({ batched: (s: string) => { stdout += s + '\n' } })
+      py.setStderr({ batched: (s: string) => { stdout += s + '\n' } })
+
+      await py.runPythonAsync(code)
+      setOutput(stdout.trim() || '(no output)')
+    } catch (err: any) {
+      setOutput(`Error: ${err.message ?? err}`)
     }
+
     setRunning(false)
+    setLoading(false)
   }
 
   async function copy() {
@@ -53,7 +87,7 @@ export default function CodeBlock({ code, language }: Props) {
             <button onClick={run} disabled={running}
               className="flex items-center gap-1.5 text-xs bg-green-600 hover:bg-green-500 disabled:opacity-50 text-white px-2.5 py-1 rounded transition-colors">
               {running
-                ? <><Loader2 className="w-3 h-3 animate-spin" /> Running</>
+                ? <><Loader2 className="w-3 h-3 animate-spin" /> {loading ? 'Loading Python...' : 'Running'}</>
                 : <><Play className="w-3 h-3" /> Run</>}
             </button>
           )}
