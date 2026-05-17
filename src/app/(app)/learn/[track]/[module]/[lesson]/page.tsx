@@ -45,7 +45,7 @@ export default async function LessonPage({ params }: Props) {
   const nextLesson   = currentIndex < (moduleLessons?.length ?? 0) - 1 ? moduleLessons![currentIndex + 1] : null
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
+    <div className="flex flex-col h-full overflow-hidden">
       <LessonHeader
         track={track as Track}
         module={module as Module}

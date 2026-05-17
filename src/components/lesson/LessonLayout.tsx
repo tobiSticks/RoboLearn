@@ -32,10 +32,10 @@ export default function LessonLayout({ content, tutor }: Props) {
 
       {/* Desktop: side by side | Mobile: tabs */}
       <div className="flex flex-1 overflow-hidden">
-        <div className={cn('flex-1 overflow-hidden', activeTab !== 'content' && 'hidden md:flex md:flex-1')}>
+        <div className={cn('flex flex-col flex-1 overflow-hidden', activeTab !== 'content' && 'hidden md:flex md:flex-1')}>
           {content}
         </div>
-        <div className={cn('overflow-hidden', activeTab !== 'tutor' && 'hidden md:flex md:w-96 md:flex-shrink-0')}>
+        <div className={cn('flex flex-col overflow-hidden', activeTab !== 'tutor' && 'hidden md:flex md:w-96 md:flex-shrink-0')}>
           {tutor}
         </div>
       </div>

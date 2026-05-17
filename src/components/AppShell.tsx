@@ -41,7 +41,7 @@ export default function AppShell({ user, children }: { user: User; children: Rea
           </div>
         </div>
 
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 flex flex-col overflow-y-auto">
           {children}
         </main>
       </div>
