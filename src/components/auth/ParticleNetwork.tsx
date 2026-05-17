@@ -20,6 +20,7 @@ export default function ParticleNetwork() {
     let raf: number
 
     const resize = () => {
+      if (!canvas) return
       canvas.width  = window.innerWidth
       canvas.height = window.innerHeight
     }
