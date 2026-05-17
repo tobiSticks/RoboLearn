@@ -25,7 +25,7 @@ export default async function CommunityPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-8 py-10">
+    <div className="max-w-4xl mx-auto px-4 md:px-8 py-6 md:py-10">
       <div className="flex items-center gap-3 mb-2">
         <Users className="w-6 h-6 text-blue-500" />
         <h1 className="text-2xl font-bold text-gray-900">Learners directory</h1>

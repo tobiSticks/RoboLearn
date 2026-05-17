@@ -32,7 +32,7 @@ export default async function LearnPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-8 py-10">
+    <div className="max-w-4xl mx-auto px-4 md:px-8 py-6 md:py-10">
 
       {/* Continue learning banner */}
       {continueLesson && (() => {
@@ -126,7 +126,7 @@ export default async function LearnPage() {
 
       {/* Quick stats if enrolled */}
       {enrolledIds.size > 0 && (
-        <div className="mt-8 grid grid-cols-3 gap-4">
+        <div className="mt-8 grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
           {[
             { label: 'Lessons completed', value: completedIds.size },
             { label: 'Tracks enrolled',   value: enrolledIds.size  },

@@ -64,7 +64,7 @@ export default async function LeaderboardPage() {
   const medalColors = ['text-yellow-400', 'text-gray-400', 'text-amber-600']
 
   return (
-    <div className="max-w-2xl mx-auto px-8 py-10">
+    <div className="max-w-2xl mx-auto px-4 md:px-8 py-6 md:py-10">
       <div className="flex items-center gap-3 mb-2">
         <Trophy className="w-6 h-6 text-yellow-400" />
         <h1 className="text-2xl font-bold text-gray-900">Leaderboard</h1>

@@ -55,31 +55,29 @@ export default function LessonHeader({ track, module, lesson, progress, prevLess
   }
 
   return (
-    <header className="bg-white border-b border-gray-100 px-6 py-3 flex items-center justify-between flex-shrink-0">
-      {/* Left: breadcrumb + back */}
-      <div className="flex items-center gap-3 min-w-0">
+    <header className="bg-white border-b border-gray-100 px-3 md:px-6 py-2.5 md:py-3 flex items-center justify-between flex-shrink-0 gap-2">
+      {/* Left: breadcrumb */}
+      <div className="flex items-center gap-1.5 min-w-0">
         <Link href={`/learn/${track.slug}`}
           className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-900 transition-colors flex-shrink-0">
           <ArrowLeft className="w-4 h-4" />
-          <span className={`font-medium ${colors.text}`}>{track.title}</span>
+          <span className={`font-medium ${colors.text} hidden sm:inline`}>{track.title}</span>
         </Link>
-        <span className="text-gray-300">/</span>
-        <span className="text-sm text-gray-500 truncate">{module.title}</span>
-        <span className="text-gray-300">/</span>
-        <span className="text-sm font-medium text-gray-900 truncate">{lesson.title}</span>
+        <span className="text-gray-300 hidden sm:inline">/</span>
+        <span className="text-sm text-gray-500 truncate hidden md:inline">{module.title}</span>
+        <span className="text-gray-300 hidden md:inline">/</span>
+        <span className="text-sm font-medium text-gray-900 truncate max-w-[120px] sm:max-w-xs md:max-w-none">{lesson.title}</span>
       </div>
 
-      {/* Right: meta + actions */}
-      <div className="flex items-center gap-3 flex-shrink-0">
-        <span className={`text-xs px-2 py-1 rounded-full font-medium ${getDifficultyColor(lesson.difficulty)}`}>
+      {/* Right: actions */}
+      <div className="flex items-center gap-1.5 md:gap-3 flex-shrink-0">
+        <span className={`text-xs px-2 py-1 rounded-full font-medium hidden sm:inline-block ${getDifficultyColor(lesson.difficulty)}`}>
           {lesson.difficulty}
         </span>
-        <div className="flex items-center gap-1 text-xs text-gray-400">
+        <div className="hidden md:flex items-center gap-1 text-xs text-gray-400">
           <Clock className="w-3.5 h-3.5" />
           {formatMinutes(lesson.estimated_minutes)}
         </div>
-
-        {/* Prev */}
         {prevLesson && (
           <Link href={`/learn/${track.slug}/${module.slug}/${prevLesson.slug}`}
             className="w-8 h-8 flex items-center justify-center border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
@@ -87,25 +85,22 @@ export default function LessonHeader({ track, module, lesson, progress, prevLess
             <ChevronLeft className="w-4 h-4 text-gray-500" />
           </Link>
         )}
-
-        {/* Next / Mark complete */}
         {done ? (
-          <div className="flex items-center gap-2">
-            <span className="flex items-center gap-1 text-xs text-green-600 font-medium">
-              <CheckCircle2 className="w-4 h-4" /> Completed
-            </span>
+          <div className="flex items-center gap-1.5">
+            <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
             {nextLesson && (
               <Link href={`/learn/${track.slug}/${module.slug}/${nextLesson.slug}`}
-                className={cn('flex items-center gap-1 text-sm font-medium px-3 py-1.5 rounded-lg transition-colors', `${colors.bg} ${colors.text} border ${colors.border}`)}>
+                className={cn('flex items-center gap-1 text-sm font-medium px-2.5 md:px-3 py-1.5 rounded-lg transition-colors', `${colors.bg} ${colors.text} border ${colors.border}`)}>
                 Next <ChevronRight className="w-4 h-4" />
               </Link>
             )}
           </div>
         ) : (
           <button onClick={markComplete} disabled={marking}
-            className="flex items-center gap-1.5 text-sm font-medium px-4 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-60">
-            <CheckCircle2 className="w-4 h-4" />
-            {marking ? 'Saving...' : nextLesson ? 'Complete & next' : 'Mark complete'}
+            className="flex items-center gap-1.5 text-xs md:text-sm font-medium px-2.5 md:px-4 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-60 whitespace-nowrap">
+            <CheckCircle2 className="w-3.5 h-3.5 md:w-4 md:h-4 flex-shrink-0" />
+            <span className="hidden sm:inline">{marking ? 'Saving...' : nextLesson ? 'Complete & next' : 'Mark complete'}</span>
+            <span className="sm:hidden">{marking ? '...' : 'Complete'}</span>
           </button>
         )}
       </div>

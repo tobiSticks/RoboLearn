@@ -36,7 +36,7 @@ export default async function TrackPage({ params }: { params: Promise<{ track: s
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-8 py-10">
+    <div className="max-w-3xl mx-auto px-4 md:px-8 py-6 md:py-10">
       {/* Track header */}
       <div className={`rounded-2xl ${colors.bg} border ${colors.border} p-8 mb-8`}>
         <h1 className={`text-2xl font-bold ${colors.text} mb-2`}>{track.title} track</h1>

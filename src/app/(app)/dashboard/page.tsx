@@ -61,16 +61,16 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-8 py-10">
-      <div className="mb-10">
-        <h1 className="text-2xl font-bold text-gray-900">
+    <div className="max-w-4xl mx-auto px-4 md:px-8 py-6 md:py-10">
+      <div className="mb-6 md:mb-10">
+        <h1 className="text-xl md:text-2xl font-bold text-gray-900">
           Welcome back{profile?.full_name ? `, ${profile.full_name.split(' ')[0]}` : ''}
         </h1>
-        <p className="text-gray-500 mt-1">Pick up where you left off.</p>
+        <p className="text-gray-500 mt-1 text-sm">Pick up where you left off.</p>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-4 mb-10">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-10">
         {[
           { label: 'Enrolled tracks',   value: enrolledIds.size,       icon: BookOpen    },
           { label: 'Lessons completed', value: completedIds.size,      icon: CheckCircle2 },

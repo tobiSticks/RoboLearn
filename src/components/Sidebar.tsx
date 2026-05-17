@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Bot, LayoutDashboard, BookOpen, MessageSquare, LogOut, User, Search, Trophy, Users } from 'lucide-react'
+import { Bot, LayoutDashboard, BookOpen, MessageSquare, LogOut, User, Search, Trophy, Users, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
@@ -15,10 +15,12 @@ const navItems = [
   { href: '/community',   icon: Users,           label: 'Community'   },
 ]
 
-export default function Sidebar({ user }: { user: SupabaseUser }) {
-  const pathname  = usePathname()
-  const router    = useRouter()
-  const supabase  = createClient()
+type Props = { user: SupabaseUser; onClose?: () => void }
+
+export default function Sidebar({ user, onClose }: Props) {
+  const pathname = usePathname()
+  const router   = useRouter()
+  const supabase = createClient()
   const [query, setQuery] = useState('')
 
   async function handleSignOut() {
@@ -28,16 +30,29 @@ export default function Sidebar({ user }: { user: SupabaseUser }) {
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault()
-    if (query.trim()) router.push(`/search?q=${encodeURIComponent(query.trim())}`)
+    if (query.trim()) {
+      router.push(`/search?q=${encodeURIComponent(query.trim())}`)
+      onClose?.()
+    }
+  }
+
+  function handleNavClick() {
+    onClose?.()
   }
 
   return (
-    <aside className="w-60 bg-white border-r border-gray-100 flex flex-col h-screen sticky top-0">
-      {/* Logo */}
-      <div className="px-5 py-5 border-b border-gray-100">
+    <aside className="w-72 md:w-60 bg-white border-r border-gray-100 flex flex-col h-screen">
+      {/* Logo + mobile close */}
+      <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
         <div className="flex items-center gap-2 font-semibold text-gray-900">
           <Bot className="w-5 h-5 text-blue-600" /> RoboLearn
         </div>
+        {onClose && (
+          <button onClick={onClose}
+            className="md:hidden w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors">
+            <X className="w-4 h-4 text-gray-500" />
+          </button>
+        )}
       </div>
 
       {/* Search */}
@@ -56,9 +71,9 @@ export default function Sidebar({ user }: { user: SupabaseUser }) {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-3 space-y-1">
+      <nav className="flex-1 px-3 py-3 space-y-1 overflow-y-auto">
         {navItems.map(({ href, icon: Icon, label }) => (
-          <Link key={href} href={href}
+          <Link key={href} href={href} onClick={handleNavClick}
             className={cn(
               'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
               pathname === href || pathname.startsWith(href + '/')
@@ -74,10 +89,6 @@ export default function Sidebar({ user }: { user: SupabaseUser }) {
       {/* Ad slot */}
       <div className="px-3 pb-3">
         <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 p-3 text-center">
-          {/* ── Drop your ad code here ──
-              Ethicalads: replace this div with their embed snippet
-              Google AdSense: replace with your <ins class="adsbygoogle"> tag
-          */}
           <p className="text-[10px] text-gray-400 leading-relaxed">
             Ad — <a href="https://ethicalads.io" target="_blank" rel="noopener noreferrer"
               className="underline hover:text-gray-500">Advertise here</a>
@@ -87,7 +98,7 @@ export default function Sidebar({ user }: { user: SupabaseUser }) {
 
       {/* User */}
       <div className="px-3 py-4 border-t border-gray-100 space-y-1">
-        <Link href="/profile"
+        <Link href="/profile" onClick={handleNavClick}
           className={cn(
             'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors',
             pathname === '/profile'

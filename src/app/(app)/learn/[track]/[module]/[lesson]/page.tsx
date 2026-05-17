@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import LessonContent from '@/components/lesson/LessonContent'
 import LessonTutor from '@/components/lesson/LessonTutor'
 import LessonHeader from '@/components/lesson/LessonHeader'
+import LessonLayout from '@/components/lesson/LessonLayout'
 import type { Track, Module, Lesson, LessonProgress } from '@/lib/types'
 
 type Props = {
@@ -54,10 +55,10 @@ export default async function LessonPage({ params }: Props) {
         nextLesson={nextLesson as Lesson | null}
         userId={user!.id}
       />
-      <div className="flex flex-1 overflow-hidden">
-        <LessonContent lesson={lesson as Lesson} />
-        <LessonTutor lesson={lesson as Lesson} userId={user!.id} />
-      </div>
+      <LessonLayout
+        content={<LessonContent lesson={lesson as Lesson} />}
+        tutor={<LessonTutor lesson={lesson as Lesson} userId={user!.id} />}
+      />
     </div>
   )
 }

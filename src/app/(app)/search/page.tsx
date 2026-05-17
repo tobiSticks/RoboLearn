@@ -21,7 +21,7 @@ export default async function SearchPage({ searchParams }: Props) {
     : { data: [] }
 
   return (
-    <div className="max-w-3xl mx-auto px-8 py-10">
+    <div className="max-w-3xl mx-auto px-4 md:px-8 py-6 md:py-10">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">
         {query ? `Results for "${query}"` : 'Search lessons'}
       </h1>
