@@ -4,8 +4,8 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(req: NextRequest) {
   const client = new OpenAI({
-    apiKey: process.env.FEATHERLESS_API_KEY,
-    baseURL: 'https://api.featherless.ai/v1',
+    apiKey: process.env.GEMINI_API_KEY,
+    baseURL: 'https://generativelanguage.googleapis.com/openai/',
   })
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -29,7 +29,7 @@ Guidelines:
   let stream
   try {
     stream = await client.chat.completions.create({
-      model: 'Qwen/Qwen2.5-72B-Instruct',
+      model: 'gemini-2.0-flash',
       max_tokens: 1024,
       stream: true,
       messages: [{ role: 'system', content: systemPrompt }, ...messages],
