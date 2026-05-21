@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(req: NextRequest) {
   const client = new OpenAI({
     apiKey: process.env.GEMINI_API_KEY,
-    baseURL: 'https://generativelanguage.googleapis.com/openai/',
+    baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
   })
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
