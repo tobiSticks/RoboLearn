@@ -4,8 +4,8 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(req: NextRequest) {
   const client = new OpenAI({
-    apiKey: process.env.GEMINI_API_KEY,
-    baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
+    apiKey: process.env.GROQ_API_KEY,
+    baseURL: 'https://api.groq.com/openai/v1',
   })
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -37,7 +37,7 @@ Rules:
 
   try {
     const response = await client.chat.completions.create({
-      model: 'gemini-2.0-flash',
+      model: 'llama-3.3-70b-versatile',
       max_tokens: 1024,
       messages: [{ role: 'user', content: prompt }],
     })
