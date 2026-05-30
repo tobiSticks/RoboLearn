@@ -38,7 +38,7 @@ Guidelines:
     const status = err?.status ?? 500
     const message =
       status === 429 ? 'The AI tutor is busy right now — you\'ve hit the rate limit. Wait a moment and try again.'
-      : status === 401 ? 'Invalid API key. Please check your GEMINI_API_KEY.'
+      : status === 401 ? 'Invalid API key. Please check your GROQ_API_KEY in Vercel environment variables.'
       : 'The AI tutor is unavailable right now. Please try again.'
     return NextResponse.json({ error: message }, { status })
   }
