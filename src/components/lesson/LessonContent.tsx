@@ -43,6 +43,17 @@ const components = {
   // Custom MDX components
   YouTube: YouTubeEmbed,
   Image:   LessonImage,
+  Callout: ({ type, children }: { type?: 'tip' | 'warning'; children: React.ReactNode }) => {
+    const styles = type === 'warning'
+      ? 'bg-amber-50 border-amber-300 text-amber-900'
+      : 'bg-blue-50 border-blue-300 text-blue-900'
+    const icon = type === 'warning' ? '⚠️' : '💡'
+    return (
+      <div className={`border-l-4 rounded-r-lg px-4 py-3 mb-6 text-sm leading-relaxed ${styles}`}>
+        <span className="mr-2">{icon}</span>{children}
+      </div>
+    )
+  },
 }
 
 export default function LessonContent({ lesson }: Props) {
@@ -50,7 +61,7 @@ export default function LessonContent({ lesson }: Props) {
 
   useEffect(() => {
     if (!lesson.content_mdx) { setMdx(null); return }
-    serialize(lesson.content_mdx).then(setMdx)
+    serialize(lesson.content_mdx).then(setMdx).catch(() => setMdx(null))
   }, [lesson.content_mdx])
 
   const hasContent = lesson.content_mdx?.trim().length > 0
