@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"require\\('@supabase/supabase-js'\\)\")",
+      "Bash(node -e \"require\\('dotenv/config'\\)\")",
+      "Bash(node --env-file=.env.local scripts/update-curriculum.mjs)"
+    ]
+  }
+}
