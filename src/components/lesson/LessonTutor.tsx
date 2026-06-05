@@ -23,7 +23,7 @@ export default function LessonTutor({ lesson, userId }: { lesson: Lesson; userId
   const [sessionId, setSessionId]   = useState<string | null>(null)
   const [collapsed, setCollapsed]   = useState(false)
   const bottomRef  = useRef<HTMLDivElement>(null)
-  const inputRef   = useRef<HTMLInputElement>(null)
+  const inputRef   = useRef<HTMLTextAreaElement>(null)
   const supabase   = createClient()
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages])
@@ -184,13 +184,16 @@ export default function LessonTutor({ lesson, userId }: { lesson: Lesson; userId
 
           {/* Input */}
           <div className="p-3 border-t border-gray-100 bg-white flex-shrink-0">
-            <div className="flex gap-2">
-              <input
+            <div className="flex gap-2 items-end">
+              <textarea
                 ref={inputRef}
                 value={input}
                 onChange={e => setInput(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
-                placeholder="Ask a question..."
+                onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() } }}
+                onInput={e => { const t = e.currentTarget; t.style.height = 'auto'; t.style.height = Math.min(t.scrollHeight, 150) + 'px' }}
+                placeholder="Ask a question... (Shift+Enter for new line)"
+                rows={1}
+                style={{ resize: 'none', overflowY: 'hidden', minHeight: '32px', maxHeight: '150px' }}
                 className="flex-1 px-3 py-2 text-xs border border-gray-200 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-colors"
                 disabled={loading}
               />

@@ -159,13 +159,17 @@ export default function TutorPage() {
 
       {/* Input */}
       <div className="border-t border-gray-100 bg-white px-8 py-4">
-        <form onSubmit={sendMessage} className="flex gap-3">
-          <input value={input} onChange={e => setInput(e.target.value)}
-            placeholder="Ask anything about robotics..."
+        <form onSubmit={sendMessage} className="flex gap-3 items-end">
+          <textarea value={input} onChange={e => setInput(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(e as any) } }}
+            placeholder="Ask anything about robotics... (Shift+Enter for new line)"
+            rows={1}
+            style={{ resize: 'none', overflowY: input.split('\n').length > 5 ? 'auto' : 'hidden', minHeight: '48px', maxHeight: '200px' }}
+            onInput={e => { const t = e.currentTarget; t.style.height = 'auto'; t.style.height = Math.min(t.scrollHeight, 200) + 'px' }}
             className="flex-1 px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50"
             disabled={loading} />
           <button type="submit" disabled={loading || !input.trim()}
-            className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center hover:bg-blue-700 transition-colors disabled:opacity-40">
+            className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center hover:bg-blue-700 transition-colors disabled:opacity-40 flex-shrink-0">
             {loading ? <Loader2 className="w-4 h-4 text-white animate-spin" /> : <Send className="w-4 h-4 text-white" />}
           </button>
         </form>
