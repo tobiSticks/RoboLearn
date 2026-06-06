@@ -77,6 +77,17 @@ export default async function HomePage() {
           </p>
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="border-t border-gray-100 py-8 text-center space-y-1">
+        <p className="text-sm text-gray-400">
+          Questions or feedback?{' '}
+          <a href="mailto:0nepost@zohomail.com" className="text-blue-600 hover:underline">
+            0nepost@zohomail.com
+          </a>
+        </p>
+        <p className="text-xs text-gray-300">Free to learn · No credit card required</p>
+      </footer>
     </main>
   )
 }

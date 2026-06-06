@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Bot, LayoutDashboard, BookOpen, MessageSquare, LogOut, User, Search, Trophy, Users, X } from 'lucide-react'
+import { Bot, LayoutDashboard, BookOpen, MessageSquare, LogOut, User, Search, Trophy, Users, X, Mail } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
@@ -112,6 +112,10 @@ export default function Sidebar({ user, onClose }: Props) {
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors">
           <LogOut className="w-4 h-4" /> Sign out
         </button>
+        <a href="mailto:0nepost@zohomail.com"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-colors">
+          <Mail className="w-4 h-4" /> Support
+        </a>
       </div>
     </aside>
   )
